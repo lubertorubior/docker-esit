@@ -24,7 +24,8 @@ ENV PATH $SPARK_HOME/bin:$PATH
 # Add hadoop classpath to spark environment
 RUN echo "export SPARK_DIST_CLASSPATH=$(hadoop classpath)" >> $SPARK_CONF_DIR/spark-env.sh
 
-COPY conf/spark-defaults.conf $SPARK_CONF_DIR
+#COPY conf/spark-defaults.conf $SPARK_CONF_DIR
+ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/spark/spark-defaults.conf $SPARK_CONF_DIR
 
 # Add custom libs to the spark classpath
 ENV SPARK_EXTRA_CLASSPATH /opt/lib/spark

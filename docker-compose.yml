@@ -65,7 +65,7 @@ services:
   nodemanager:
     image: docker-esit/hadoop-nodemanager:2.8.3
     environment:
-      - ADD_TO_HADOOP_CLASSPATH=http://snurran.sics.se/hops/tmp/oreilly/spark-2.3.0-bin-hadoop2.7/yarn/spark-2.3.0-yarn-shuffle.jar
+      - ADD_TO_HADOOP_CLASSPATH=https://github.com/lubertorubior/docker-esit/raw/master/jars/hadoop/spark-2.3.0-yarn-shuffle.jar
       - YARN_HEAPSIZE=1024
     networks:
       - hadoop
