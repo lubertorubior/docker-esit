@@ -134,7 +134,7 @@ services:
       - hadoop
     environment:
       - HOST_PASSWORD=${HPASS}
-      - ADD_TO_SPARK_CLASSPATH=http://central.maven.org/maven2/org/apache/avro/avro/1.7.7/avro-1.7.7.jar
+      - ADD_TO_SPARK_CLASSPATH=https://github.com/lubertorubior/docker-esit/raw/master/jars/spark/avro-1.7.7.jar
     volumes:
       - data:/datos
     logging:
