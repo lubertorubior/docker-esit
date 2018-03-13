@@ -1,4 +1,4 @@
-FROM docker-esit/spark:2.3.0
+FROM taroull/spark:2.3.0
 
 # Web
 EXPOSE 18080

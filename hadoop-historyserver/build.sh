@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t docker-esit/hadoop-historyserver:2.8.3 .
+docker build -t taroull/hadoop-historyserver:2.8.3 .
