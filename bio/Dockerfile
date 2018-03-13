@@ -57,7 +57,7 @@ RUN apt-get install -y --fix-missing \
 # Install ssh server
 RUN apt-get update && apt-get install -y openssh-server supervisor
 RUN mkdir -p /var/run/sshd /var/log/supervisor
-RUN echo 'bigdata:${HOST_PASSWORD}' | chpasswd
+#RUN echo 'bigdata:${HOST_PASSWORD}' | chpasswd
 
 # TODO ESTO ES SIN COPIAR sshd_config
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
