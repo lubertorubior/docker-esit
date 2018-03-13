@@ -52,9 +52,9 @@ ENV PATH $HADOOP_PREFIX/bin/:$PATH
 # Download config files
 #COPY conf $HADOOP_CONF_DIR
 ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/core-site.xml $HADOOP_CONF_DIR
-ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/hdfs-site.xml $HADDOP_CONF_DIR
-ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/mapred-site.xml $HADDOP_CONF_DIR
-ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/yarn-site.xml $HADDOP_CONF_DIR
+ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/hdfs-site.xml $HADOOP_CONF_DIR
+ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/mapred-site.xml $HADOOP_CONF_DIR
+ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/yarn-site.xml $HADOOP_CONF_DIR
 
 # Set flexible entrypoints scripts
 COPY ./entrypoint.sh /
