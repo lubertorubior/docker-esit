@@ -3,7 +3,7 @@ version: '3.2'
 services:
 
   namenode:
-    image: docker-esit/hadoop-namenode:2.8.3
+    image: taroull/hadoop-namenode:2.8.3
     hostname: namenode
     networks:
       - hadoop
@@ -23,9 +23,12 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-        
+      placement:
+        constraints:                                                                                                  
+          - node.hostname == l5
+
   datanode:
-    image: docker-esit/hadoop-datanode:2.8.3
+    image: taroull/hadoop-datanode:2.8.3
     # Unique hostname
     # hostname: "datanode-{{.Node.ID}}"
     depends_on:
@@ -44,7 +47,7 @@ services:
         delay: 5s
 
   resourcemanager:
-    image: docker-esit/hadoop-resourcemanager:2.8.3
+    image: taroull/hadoop-resourcemanager:2.8.3
     hostname: resourcemanager
     networks: 
       - hadoop
@@ -61,9 +64,13 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      placement:
+        constraints:                                                                                                  
+          - node.hostname == l5
+
 
   nodemanager:
-    image: docker-esit/hadoop-nodemanager:2.8.3
+    image: taroull/hadoop-nodemanager:2.8.3
     environment:
       #- ADD_TO_HADOOP_CLASSPATH=https://github.com/lubertorubior/docker-esit/raw/master/jars/hadoop/spark-2.3.0-yarn-shuffle.jar
       - YARN_HEAPSIZE=1024
@@ -81,7 +88,7 @@ services:
         delay: 5s
 
   hadoop-historyserver:
-    image: docker-esit/hadoop-historyserver:2.8.3  
+    image: taroull/hadoop-historyserver:2.8.3  
     hostname: hadoop-historyserver
     depends_on:
       - namenode
@@ -89,9 +96,19 @@ services:
       - hadoop
     ports:
       - "8188:8188"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      placement:
+        constraints:                                                                                                  
+          - node.hostname == l5
+
 
   spark:
-    image: docker-esit/spark:2.3.0
+    image: taroull/spark:2.3.0
     networks: 
        - hadoop
     volumes:
@@ -106,10 +123,13 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      placement:
+        constraints:                                                                                                  
+          - node.hostname == l5
     command: tail -f /var/log/dmesg
 
   spark-historyserver:
-    image: docker-esit/spark-historyserver:2.3.0
+    image: taroull/spark-historyserver:2.3.0
     hostname: spark-historyserver
     depends_on:
       - namenode
@@ -127,14 +147,19 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
-
+      placement:
+        constraints:                                                                                                  
+          - node.hostname == l5
+            
   bio:
-    image: docker-esit/bio:4.0.2.1
+    image: taroull/bio:4.0.2.1
     networks:
       - hadoop
     environment:
-      - HOST_PASSWORD=${HPASS}
+      - HPASS=wopis
       - ADD_TO_SPARK_CLASSPATH=https://github.com/lubertorubior/docker-esit/raw/master/jars/spark/avro-1.7.7.jar
+    ports:
+        - "2222:22"
     volumes:
       - data:/datos
     logging:
@@ -146,6 +171,9 @@ services:
       restart_policy:
         condition: on-failure
         delay: 5s
+      placement:
+        constraints:                                                                                                  
+          - node.hostname == l5
     command: tail -f /var/log/dmesg
 
 volumes:

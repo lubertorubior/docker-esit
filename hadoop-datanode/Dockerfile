@@ -1,4 +1,4 @@
-FROM docker-esit/hadoop:2.8.3
+FROM taroull/hadoop:2.8.3
 
 # Web
 EXPOSE 50075

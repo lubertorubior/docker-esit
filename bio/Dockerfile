@@ -1,4 +1,4 @@
-FROM docker-esit/spark:2.3.0 as spark
+FROM taroull/spark:2.3.0 as spark
 FROM broadinstitute/gatk:4.0.2.1
 
 # Update and install packages

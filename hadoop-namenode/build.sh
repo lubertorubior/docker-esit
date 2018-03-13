@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t docker-esit/hadoop-namenode:2.8.3 .
+docker build -t taroull/hadoop-namenode:2.8.3 .
