@@ -106,7 +106,6 @@ services:
         constraints:                                                                                                  
           - node.hostname == l5
 
-
   spark:
     image: taroull/spark:2.3.0
     networks: 

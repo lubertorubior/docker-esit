@@ -1,8 +1,8 @@
 FROM taroull/spark:2.3.0 as spark
 FROM broadinstitute/gatk:4.0.2.1
 
-# Update and install packages
-RUN apt-get update && apt-get install -y curl nano
+# Update and install some useful packages
+RUN apt-get update && apt-get install -y curl
 
 # Set hadoop and spark environment data
 ENV HADOOP_VERSION 2.8.3
@@ -46,16 +46,18 @@ RUN apt-get install -y --fix-missing \
   curl \
   htop \
   memstat \
+  nano \
   net-tools \
   sysstat \
   tmux \
   unzip \
-  wget
+  wget \
+  xmlstarlet
 
 # Install ssh server
 RUN apt-get update && apt-get install -y openssh-server supervisor
 RUN mkdir -p /var/run/sshd /var/log/supervisor
-RUN echo 'root:${HPASS}' | chpasswd
+RUN echo 'bigdata:${HOST_PASSWORD}' | chpasswd
 
 # TODO ESTO ES SIN COPIAR sshd_config
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
