@@ -1,0 +1,158 @@
+version: '3.2'
+
+services:
+
+  namenode:
+    image: docker-esit/hadoop-namenode:2.8.3
+    hostname: namenode
+    networks:
+      - hadoop
+    ports:
+      - "8020:8020"
+      - "50070:50070"
+    environment:
+      - CLUSTER_NAME=cluster-esit
+    volumes:
+      - namenode:/var/hadoop/dfs/name
+    logging:
+      options:
+        max-size: 50m
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        
+  datanode:
+    image: docker-esit/hadoop-datanode:2.8.3
+    # Unique hostname
+    # hostname: "datanode-{{.Node.ID}}"
+    depends_on:
+      - namenode
+    networks: 
+      - hadoop
+    ports:
+      - "50075:50075"
+      - "50020:50020" 
+    volumes:
+      - datanode:/var/hadoop/dfs/data
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+
+  resourcemanager:
+    image: docker-esit/hadoop-resourcemanager:2.8.3
+    hostname: resourcemanager
+    networks: 
+      - hadoop
+    ports:
+      - "8088:8088"
+    environment:
+      - YARN_HEAPSIZE=1024
+    logging:
+      options:
+        max-size: 50m
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+
+  nodemanager:
+    image: docker-esit/hadoop-nodemanager:2.8.3
+    environment:
+      - ADD_TO_HADOOP_CLASSPATH=http://snurran.sics.se/hops/tmp/oreilly/spark-2.3.0-bin-hadoop2.7/yarn/spark-2.3.0-yarn-shuffle.jar
+      - YARN_HEAPSIZE=1024
+    networks:
+      - hadoop
+    ports:
+      - "8042:8042"
+    logging:
+      options:
+        max-size: 50m
+    deploy:
+       mode: global 
+       restart_policy:
+        condition: on-failure
+        delay: 5s
+
+  hadoop-historyserver:
+    image: docker-esit/hadoop-historyserver:2.8.3  
+    hostname: hadoop-historyserver
+    depends_on:
+      - namenode
+    networks:
+      - hadoop
+    ports:
+      - "8188:8188"
+
+  spark:
+    image: docker-esit/spark:2.3.0
+    networks: 
+       - hadoop
+    volumes:
+      - data:/datos
+      #- lib:/opt/lib
+    logging:
+      options:
+        max-size: 50m
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    command: tail -f /var/log/dmesg
+
+  spark-historyserver:
+    image: docker-esit/spark-historyserver:2.3.0
+    hostname: spark-historyserver
+    depends_on:
+      - namenode
+      - spark
+    networks:
+      - hadoop
+    ports:
+      - "8288:18080"
+    logging:
+      options:
+        max-size: 50m
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+
+  bio:
+    image: docker-esit/bio:4.0.2.1
+    networks:
+      - hadoop
+    environment:
+      - HOST_PASSWORD=${HPASS}
+      - ADD_TO_SPARK_CLASSPATH=http://central.maven.org/maven2/org/apache/avro/avro/1.7.7/avro-1.7.7.jar
+    volumes:
+      - data:/datos
+    logging:
+      options:
+        max-size: 50m
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    command: tail -f /var/log/dmesg
+
+volumes:
+  namenode:
+  datanode:
+  data:
+
+networks:
+  hadoop:
+    attachable: true
