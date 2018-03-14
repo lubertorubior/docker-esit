@@ -155,8 +155,9 @@ services:
     networks:
       - hadoop
     environment:
-      - HPASS=wopis
       - ADD_TO_SPARK_CLASSPATH=https://github.com/lubertorubior/docker-esit/raw/master/jars/spark/avro-1.7.7.jar
+    secrets:
+      - host_password
     ports:
         - "2222:22"
     volumes:
@@ -182,3 +183,7 @@ volumes:
 networks:
   hadoop:
     attachable: true
+
+secrets:
+  host_password:
+    file: ./host_password.secret
