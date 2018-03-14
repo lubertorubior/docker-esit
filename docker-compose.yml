@@ -173,7 +173,6 @@ services:
       placement:
         constraints:                                                                                                  
           - node.hostname == l5
-    command: tail -f /var/log/dmesg
 
 volumes:
   namenode:

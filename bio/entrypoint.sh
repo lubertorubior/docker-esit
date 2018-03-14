@@ -8,4 +8,5 @@ then
   /bin/run-parts --verbose $DIR
 fi
 
+echo "$@"
 exec "$@"

@@ -47,6 +47,7 @@ RUN apt-get install -y --fix-missing \
   htop \
   memstat \
   nano \
+  netcat \
   net-tools \
   sysstat \
   tmux \
@@ -58,6 +59,7 @@ RUN apt-get install -y --fix-missing \
 RUN apt-get update && apt-get install -y openssh-server supervisor
 RUN mkdir -p /var/run/sshd /var/log/supervisor
 #RUN echo 'bigdata:${HOST_PASSWORD}' | chpasswd
+RUN echo 'root:bigdata' | chpasswd
 
 # TODO ESTO ES SIN COPIAR sshd_config
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
@@ -79,5 +81,6 @@ RUN chmod +x /entrypoint.sh
 COPY ./docker-entrypoint.d/* /docker-entrypoint.d/
 COPY --from=spark /docker-entrypoint.d/ /docker-entrypoint.d/
 RUN chmod +x /docker-entrypoint.d/*
+#CMD ["/usr/bin/supervisord"]
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/supervisord"]
