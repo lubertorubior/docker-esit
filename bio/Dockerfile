@@ -33,7 +33,7 @@ RUN sed -i /spark.driver.userClassPathFirst/s/^/#/ /gatk/gatk
 RUN mkdir -p /datos
 WORKDIR /datos
 
-ADD https://raw.githubusercontent.com/lubertorubior/docker-esit/master/run_tests.sh /datos
+ADD https://raw.githubusercontent.com/lubertorubior/docker-esit/master/test/run_tests.sh /datos
 RUN chmod +x /datos/run_tests.sh
 
 # Set locale
