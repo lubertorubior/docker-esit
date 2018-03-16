@@ -33,6 +33,9 @@ RUN sed -i /spark.driver.userClassPathFirst/s/^/#/ /gatk/gatk
 RUN mkdir -p /datos
 WORKDIR /datos
 
+ADD https://raw.githubusercontent.com/lubertorubior/docker-esit/master/run_tests.sh /datos
+RUN chmod +x /datos/run_tests.sh
+
 # Set locale
 RUN apt-get install -y locales
 RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
