@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Tests URL
-TESTS_URL="https://github.com/lubertorubior/docker-esit/raw/master/test/test.zip"
+TESTS_URL="https://github.com/lubertorubior/docker-esit/raw/master/test/test.tar.gz"
 
 # Input file path
 tests_path=${1:-/tmp/tests}
