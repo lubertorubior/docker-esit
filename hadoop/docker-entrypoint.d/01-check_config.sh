@@ -6,5 +6,3 @@ then
   echo "fs.defaultFS must be specified in core-site.xml"
   exit 2
 fi
-
-mkdir -p /opt/holasoypapa

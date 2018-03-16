@@ -33,6 +33,7 @@ RUN sed -i /spark.driver.userClassPathFirst/s/^/#/ /gatk/gatk
 RUN mkdir -p /datos
 WORKDIR /datos
 
+# Download tests
 ADD https://raw.githubusercontent.com/lubertorubior/docker-esit/master/test/run_tests.sh /datos
 RUN chmod +x /datos/run_tests.sh
 
@@ -70,7 +71,6 @@ ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 
 # Copy configuration files
-#COPY conf/sshd_config /etc/ssh/sshd_config
 COPY conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # SSH
@@ -82,6 +82,5 @@ RUN chmod +x /entrypoint.sh
 COPY ./docker-entrypoint.d/* /docker-entrypoint.d/
 COPY --from=spark /docker-entrypoint.d/ /docker-entrypoint.d/
 RUN chmod +x /docker-entrypoint.d/*
-#CMD ["/usr/bin/supervisord"]
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/supervisord"]
