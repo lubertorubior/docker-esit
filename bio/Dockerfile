@@ -1,6 +1,6 @@
 FROM taroull/spark:2.3.0 as spark
 FROM broadinstitute/gatk:4.0.2.1
-
+USER root
 # Update and install some useful packages
 RUN apt-get update && apt-get install -y curl
 
