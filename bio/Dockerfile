@@ -29,6 +29,72 @@ ENV HADOOP_CLASSPATH $HADOOP_EXTRA_CLASSPATH
 # Patch gatk script to include our custom classpath first
 RUN sed -i /spark.driver.userClassPathFirst/s/^/#/ /gatk/gatk
 
+# Create directories for other genomic tools
+ENV GENOMIC_TOOLS /genomics/tools
+RUN mkdir -p $GENOMIC_TOOLS/bwa \
+             $GENOMIC_TOOLS/cromwell \
+             $GENOMIC_TOOLS/nextflow \
+             $GENOMIC_TOOLS/picard \
+             $GENOMIC_TOOLS/rabix \
+             $GENOMIC_TOOLS/samtools \
+             $GENOMIC_TOOLS/wgsim \
+             $GENOMIC_TOOLS/womtool
+
+# Install BWA
+ADD https://github.com/lh3/bwa/releases/download/v0.7.17/bwa-0.7.17.tar.bz2 /tmp/
+RUN tar -xvjf /tmp/bwa-0.7.17.tar.bz2 -C $GENOMIC_TOOLS/bwa \
+ && rm /tmp/bwa-0.7.17.tar.bz2*
+WORKDIR $GENOMIC_TOOLS/bwa/bwa-0.7.17
+RUN make
+WORKDIR $GENOMIC_TOOLS
+
+# Install Cromwell
+ADD https://github.com/broadinstitute/cromwell/releases/download/31/cromwell-31.jar $GENOMIC_TOOLS/cromwell
+
+# Install Nextflow
+ADD https://github.com/nextflow-io/nextflow/releases/download/v0.28.0/nextflow-0.28.0-all $GENOMIC_TOOLS/nextflow
+
+# Install Picard
+ADD https://github.com/broadinstitute/picard/releases/download/2.18.0/picard.jar $GENOMIC_TOOLS/picard
+
+# Install Rabix Executor
+ADD https://github.com/rabix/bunny/releases/download/v1.0.4-5/rabix-1.0.4.tar.gz /tmp/
+RUN tar -xzvf /tmp/rabix-1.0.4.tar.gz -C $GENOMIC_TOOLS/rabix/ \
+ && rm /tmp/rabix-1.0.4.tar.gz*
+
+# Create soft link to existing Samtools
+RUN ln -s /usr/bin/samtools $GENOMIC_TOOLS/samtools/samtools
+
+# Install Wgsim
+RUN git clone https://github.com/lh3/wgsim.git
+WORKDIR $GENOMIC_TOOLS/wgsim
+RUN gcc -g -O2 -Wall -o wgsim wgsim.c -lz -lm
+WORKDIR $GENOMIC_TOOLS
+
+# Install Womtool
+ADD https://github.com/broadinstitute/cromwell/releases/download/31/womtool-31.jar $GENOMIC_TOOLS/womtool
+
+# Set permissions
+RUN chmod +x bwa/bwa-0.7.17/bwa \
+             cromwell/cromwell-31.jar \
+             nextflow/nextflow-0.28.0-all \
+             picard/picard.jar \
+             rabix/rabix-cli-1.0.4/rabix \
+             wgsim/wgsim \
+             womtool/womtool-31.jar
+
+# Set aliases for easier usage
+ENV CROMWELL $GENOMIC_TOOLS/cromwell/cromwell-31.jar
+ENV PICARD $GENOMIC_TOOLS/picard/picard.jar
+ENV WOMTOOL $GENOMIC_TOOLS/womtool/womtool-31.jar
+RUN echo "alias bwa=$GENOMIC_TOOLS/bwa/bwa-0.7.17/bwa" >> ~/.bashrc \
+ && echo 'alias cromwell="java -jar $CROMWELL"' >> ~/.bashrc \
+ && echo "alias nextflow=$GENOMIC_TOOLS/nextflow/nextflow-0.28.0-all" >> ~/.bashrc \
+ && echo 'alias picard="java -jar $PICARD"' >> ~/.bashrc \
+ && echo "alias rabix=$GENOMIC_TOOLS/rabix/rabix-cli-1.0.4/rabix" >> ~/.bashrc \
+ && echo "alias wgsim=$GENOMIC_TOOLS/wgsim/wgsim" >> ~/.bashrc \
+ && echo 'alias womtool="java -jar $WOMTOOL"' >> ~/.bashrc
+
 # Create default directory
 ENV DEFAULT_DIR /datos
 RUN mkdir -p $DEFAULT_DIR
@@ -74,9 +140,9 @@ RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so
 RUN printenv | grep -vE '^(HOME|USER|GROUP|UID|GID|SHELL|CONDA_MD5)' | sed 's/^/export /' > /etc/profile.d/env_vars.sh
 
 # Fix for SSH
-RUN echo "if [ -d \"$DEFAULT_DIR\" ]; then" > /etc/bash.bashrc && \
-    echo "cd \"$DEFAULT_DIR\"" >> /etc/bash.bashrc && \
-    echo "fi" >> /etc/bash.bashrc
+RUN echo "if [ -d \"$DEFAULT_DIR\" ]; then" > /etc/bash.bashrc \
+ && echo "cd \"$DEFAULT_DIR\"" >> /etc/bash.bashrc \
+ && echo "fi" >> /etc/bash.bashrc
 
 # Copy supervisor configuration
 COPY conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
