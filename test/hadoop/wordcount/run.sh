@@ -7,7 +7,7 @@ Red='\033[0;31m'          # Red
 Green='\033[0;32m'        # Green
 Cyan='\033[0;36m'         # Cyan
 
-echo "---------------------------------"
+echo -e "${Cyan}---------------------------------${COff}"
 echo -e "${Cyan}[HADOOP] Testing Hadoop...${COff}"
 
 echo -e "${Cyan}[HADOOP] Creating HDFS directories${COff}"

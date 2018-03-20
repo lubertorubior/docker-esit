@@ -1,15 +1,14 @@
 #!/bin/bash
 
-mkdir -p /opt/ejecutoprime
-
 function mk_config_dir() {
   dir=$(sed -n "s/^${1}[[:space:]]\+//p" $SPARK_CONF_DIR/spark-defaults.conf | sed -e 's/file:\/\//''/')
-  if [[ "$dir" =~ ^hdfs://* ]]
+  echo "Creating ${1} directory"
+  if [[ "${dir}" =~ ^hdfs://* ]]
   then
-    hadoop fs -mkdir -p "$dir"
-  elif [[ "$dir" =~ ^/* ]]
+    hadoop fs -mkdir -p "${dir}"
+  elif [[ "{$dir}" =~ ^/* ]]
   then
-    mkdir -p "$dir"
+    mkdir -p "${dir}"
   fi
 }
 

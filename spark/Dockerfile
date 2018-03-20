@@ -29,7 +29,6 @@ ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/spark/spark-def
 
 # Add custom libs to the spark classpath
 ENV SPARK_EXTRA_CLASSPATH /opt/lib/spark
-#RUN mkdir -p $SPARK_EXTRA_CLASSPATH
 RUN echo "spark.executor.extraClassPath $SPARK_EXTRA_CLASSPATH" >> $SPARK_CONF_DIR/spark-defaults.conf \
  && echo "spark.driver.extraClassPath $SPARK_EXTRA_CLASSPATH" >> $SPARK_CONF_DIR/spark-defaults.conf \
  && echo "spark.executor.userClassPathFirst true" >> $SPARK_CONF_DIR/spark-defaults.conf \
@@ -40,6 +39,6 @@ ENV HADOOP_EXTRA_CLASSPATH /opt/lib/hadoop
 #RUN mkdir -p $HADOOP_EXTRA_CLASSPATH
 ENV HADOOP_CLASSPATH $HADOOP_EXTRA_CLASSPATH
 
-# Create work directory
+# Create default directory
 RUN mkdir -p /datos
 WORKDIR /datos

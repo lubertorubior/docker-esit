@@ -20,9 +20,7 @@ RUN apt-get update && apt-get install -y \
     python3.5 \
     python3-pip
 RUN pip install pip --upgrade
-#RUN pip install pyspark
 RUN pip3 install -q --upgrade pip
-#RUN pip3 install -q pyspark
 
 # Set hadoop environment data
 ENV HADOOP_VERSION 2.8.3
@@ -40,7 +38,6 @@ RUN curl -fSL "$HADOOP_URL" -o /tmp/hadoop.tar.gz \
 
 # Add custom libs to the hadoop classpath
 ENV HADOOP_EXTRA_CLASSPATH /opt/lib/hadoop
-#RUN mkdir -p $HADOOP_EXTRA_CLASSPATH
 ENV HADOOP_CLASSPATH $HADOOP_EXTRA_CLASSPATH/*
 
 # Add hadoop to path
