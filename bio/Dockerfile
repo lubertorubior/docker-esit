@@ -1,6 +1,6 @@
 FROM taroull/spark:2.3.0 as spark
 FROM broadinstitute/gatk:4.0.2.1
-USER root
+
 # Update and install some useful packages
 RUN apt-get update && apt-get install -y curl
 
@@ -29,9 +29,10 @@ ENV HADOOP_CLASSPATH $HADOOP_EXTRA_CLASSPATH
 # Patch gatk script to include our custom classpath first
 RUN sed -i /spark.driver.userClassPathFirst/s/^/#/ /gatk/gatk
 
-# Create work directory
-RUN mkdir -p /datos
-WORKDIR /datos
+# Create default directory
+ENV DEFAULT_DIR /datos
+RUN mkdir -p $DEFAULT_DIR
+WORKDIR $DEFAULT_DIR
 
 # Download tests
 ADD https://raw.githubusercontent.com/lubertorubior/docker-esit/master/test/run_tests.sh /datos
@@ -59,18 +60,25 @@ RUN apt-get install -y --fix-missing \
   wget \
   xmlstarlet
 
-# Install ssh server
+# Install SSH server and supervisor
 RUN apt-get update && apt-get install -y openssh-server supervisor
 RUN mkdir -p /var/run/sshd /var/log/supervisor
 
-# TODO ESTO ES SIN COPIAR sshd_config
+# Set SSH configuration
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
 # SSH login fix. Otherwise user is kicked off after login
 RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-ENV NOTVISIBLE "in users profile"
-RUN echo "export VISIBLE=now" >> /etc/profile
 
-# Copy configuration files
+# Dump env variables to profile.d so they are available through SSH
+RUN printenv | grep -vE '^(HOME|USER|GROUP|UID|GID|SHELL|CONDA_MD5)' | sed 's/^/export /' > /etc/profile.d/env_vars.sh
+
+# Fix for SSH
+RUN echo "if [ -d \"$DEFAULT_DIR\" ]; then" > /etc/bash.bashrc && \
+    echo "cd \"$DEFAULT_DIR\"" >> /etc/bash.bashrc && \
+    echo "fi" >> /etc/bash.bashrc
+
+# Copy supervisor configuration
 COPY conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # SSH
