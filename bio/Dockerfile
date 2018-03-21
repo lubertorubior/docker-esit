@@ -41,26 +41,31 @@ RUN mkdir -p $GENOMIC_TOOLS/bwa \
              $GENOMIC_TOOLS/womtool
 
 # Install BWA
-ADD https://github.com/lh3/bwa/releases/download/v0.7.17/bwa-0.7.17.tar.bz2 /tmp/
-RUN tar -xvjf /tmp/bwa-0.7.17.tar.bz2 -C $GENOMIC_TOOLS/bwa \
- && rm /tmp/bwa-0.7.17.tar.bz2*
-WORKDIR $GENOMIC_TOOLS/bwa/bwa-0.7.17
+ENV BWA_VERSION 0.7.17
+ADD https://github.com/lh3/bwa/releases/download/v$BWA_VERSION/bwa-$BWA_VERSION.tar.bz2 /tmp/
+RUN tar -xvjf /tmp/bwa-$BWA_VERSION.tar.bz2 -C $GENOMIC_TOOLS/bwa \
+ && rm /tmp/bwa-$BWA_VERSION.tar.bz2*
+WORKDIR $GENOMIC_TOOLS/bwa/bwa-$BWA_VERSION
 RUN make
 WORKDIR $GENOMIC_TOOLS
 
 # Install Cromwell
-ADD https://github.com/broadinstitute/cromwell/releases/download/31/cromwell-31.jar $GENOMIC_TOOLS/cromwell
+ENV CROMWELL_VERSION 31
+ADD https://github.com/broadinstitute/cromwell/releases/download/$CROMWELL_VERSION/cromwell-$CROMWELL_VERSION.jar $GENOMIC_TOOLS/cromwell
 
 # Install Nextflow
-ADD https://github.com/nextflow-io/nextflow/releases/download/v0.28.0/nextflow-0.28.0-all $GENOMIC_TOOLS/nextflow
+ENV NEXTFLOW_VERSION 0.28.0
+ADD https://github.com/nextflow-io/nextflow/releases/download/v$NEXTFLO_VERSION/nextflow-$NEXTFLOW_VERSION-all $GENOMIC_TOOLS/nextflow
 
 # Install Picard
-ADD https://github.com/broadinstitute/picard/releases/download/2.18.0/picard.jar $GENOMIC_TOOLS/picard
+ENV PICARD_VERSION 2.18.0
+ADD https://github.com/broadinstitute/picard/releases/download/$PICARD_VERSION/picard.jar $GENOMIC_TOOLS/picard
 
 # Install Rabix Executor
-ADD https://github.com/rabix/bunny/releases/download/v1.0.4-5/rabix-1.0.4.tar.gz /tmp/
-RUN tar -xzvf /tmp/rabix-1.0.4.tar.gz -C $GENOMIC_TOOLS/rabix/ \
- && rm /tmp/rabix-1.0.4.tar.gz*
+ENV RABIX_VERSION 1.0.4
+ADD https://github.com/rabix/bunny/releases/download/v$RABIX_VERSION-5/rabix-$RABIX_VERSION.tar.gz /tmp/
+RUN tar -xzvf /tmp/rabix-$RABIX_VERSION.tar.gz -C $GENOMIC_TOOLS/rabix/ \
+ && rm /tmp/rabix-$RABIX_VERSION.tar.gz*
 
 # Create soft link to existing Samtools
 RUN ln -s /usr/bin/samtools $GENOMIC_TOOLS/samtools/samtools
@@ -72,26 +77,27 @@ RUN gcc -g -O2 -Wall -o wgsim wgsim.c -lz -lm
 WORKDIR $GENOMIC_TOOLS
 
 # Install Womtool
-ADD https://github.com/broadinstitute/cromwell/releases/download/31/womtool-31.jar $GENOMIC_TOOLS/womtool
+ENV WOMTOOL_VERSION
+ADD https://github.com/broadinstitute/cromwell/releases/download/$WOMTOOL_VERSION/womtool-$WOMTOOL_VERSION.jar $GENOMIC_TOOLS/womtool
 
 # Set permissions
-RUN chmod +x bwa/bwa-0.7.17/bwa \
-             cromwell/cromwell-31.jar \
-             nextflow/nextflow-0.28.0-all \
+RUN chmod +x bwa/bwa-$BWA_VERSION/bwa \
+             cromwell/cromwell-$CROMWELL_VERSION.jar \
+             nextflow/nextflow-$NEXTFLOW_VERSION-all \
              picard/picard.jar \
-             rabix/rabix-cli-1.0.4/rabix \
+             rabix/rabix-cli-$RABIX_VERSION/rabix \
              wgsim/wgsim \
-             womtool/womtool-31.jar
+             womtool/womtool-$WOMTOOL_VERSION.jar
 
 # Set aliases for easier usage
-ENV CROMWELL $GENOMIC_TOOLS/cromwell/cromwell-31.jar
+ENV CROMWELL $GENOMIC_TOOLS/cromwell/cromwell-$CROMWELL_VERSION.jar
 ENV PICARD $GENOMIC_TOOLS/picard/picard.jar
-ENV WOMTOOL $GENOMIC_TOOLS/womtool/womtool-31.jar
-RUN echo "alias bwa=$GENOMIC_TOOLS/bwa/bwa-0.7.17/bwa" >> ~/.bashrc \
+ENV WOMTOOL $GENOMIC_TOOLS/womtool/womtool-$WOMTOOL_VERSION.jar
+RUN echo "alias bwa=$GENOMIC_TOOLS/bwa/bwa-$BWA_VERSION/bwa" >> ~/.bashrc \
  && echo 'alias cromwell="java -jar $CROMWELL"' >> ~/.bashrc \
- && echo "alias nextflow=$GENOMIC_TOOLS/nextflow/nextflow-0.28.0-all" >> ~/.bashrc \
+ && echo "alias nextflow=$GENOMIC_TOOLS/nextflow/nextflow-$NEXTFLOW_VERSION-all" >> ~/.bashrc \
  && echo 'alias picard="java -jar $PICARD"' >> ~/.bashrc \
- && echo "alias rabix=$GENOMIC_TOOLS/rabix/rabix-cli-1.0.4/rabix" >> ~/.bashrc \
+ && echo "alias rabix=$GENOMIC_TOOLS/rabix/rabix-cli-$RABIX_VERSION/rabix" >> ~/.bashrc \
  && echo "alias wgsim=$GENOMIC_TOOLS/wgsim/wgsim" >> ~/.bashrc \
  && echo 'alias womtool="java -jar $WOMTOOL"' >> ~/.bashrc
 
