@@ -200,6 +200,29 @@ services:
       placement:
         constraints: [node.hostname == l5 ]
 
+  hue:
+    image: taroull/hue:4.1.0
+    hostname: hue
+    depends_on:
+      - namenode
+    networks:
+      - hadoop
+    ports:
+      - "10000:8888"
+      - "11000:11000"
+    logging:
+      options:
+        max-size: 50m
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+      placement:
+        constraints:
+          - node.hostname == l5
+
 volumes:
   namenode:
   datanode:
