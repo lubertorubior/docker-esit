@@ -30,7 +30,7 @@ services:
   datanode:
     image: taroull/hadoop-datanode:2.8.3
     # Unique hostname
-    hostname: "{{.Node.Hostname}}.etsii.ull.es"
+    # hostname: "datanode-{{.Node.ID}}"
     depends_on:
       - namenode
     networks: 
@@ -70,7 +70,6 @@ services:
 
   nodemanager:
     image: taroull/hadoop-nodemanager:2.8.3
-    hostname: "{{.Node.Hostname}}.etsii.ull.es"
     environment:
       - ADD_TO_HADOOP_CLASSPATH=https://github.com/lubertorubior/docker-esit/raw/master/jars/hadoop/spark-2.3.0-yarn-shuffle.jar
       - YARN_HEAPSIZE=1024
@@ -84,12 +83,8 @@ services:
     deploy:
        mode: global 
        restart_policy:
-         condition: on-failure
-         delay: 5s
-       resources:
-         limits:
-           cpus: "0.8"
-           memory: 5G
+        condition: on-failure
+        delay: 5s
 
   hadoop-historyserver:
     image: taroull/hadoop-historyserver:2.8.3  
@@ -178,27 +173,6 @@ services:
       placement:
         constraints:                                                                                                  
           - node.hostname == l5
-
-  viz:
-    image: dockersamples/visualizer
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    deploy:
-      placement:
-        constraints: [node.hostname == l5 ]
-
-    networks:
-      - hadoop
-    ports:
-      - "7000:8080"
-
-  web:
-    image: taroull/web:0.1
-    ports:
-      - "80:80"
-    deploy:
-      placement:
-        constraints: [node.hostname == l5 ]
 
 volumes:
   namenode:
