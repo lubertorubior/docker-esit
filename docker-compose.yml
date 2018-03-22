@@ -68,7 +68,6 @@ services:
         constraints:                                                                                                  
           - node.hostname == l5
 
-
   nodemanager:
     image: taroull/hadoop-nodemanager:2.8.3
     environment:

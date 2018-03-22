@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir -p $HADOOP_EXTRA_CLASSPATH
+mkdir -p "$HADOOP_EXTRA_CLASSPATH"
 for i in "${ADD_TO_HADOOP_CLASSPATH[@]}"
 do
   echo "Downloading lib: ${i}"

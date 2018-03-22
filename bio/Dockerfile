@@ -55,7 +55,7 @@ ADD https://github.com/broadinstitute/cromwell/releases/download/$CROMWELL_VERSI
 
 # Install Nextflow
 ENV NEXTFLOW_VERSION 0.28.0
-ADD https://github.com/nextflow-io/nextflow/releases/download/v$NEXTFLO_VERSION/nextflow-$NEXTFLOW_VERSION-all $GENOMIC_TOOLS/nextflow
+ADD https://github.com/nextflow-io/nextflow/releases/download/v$NEXTFLOW_VERSION/nextflow-$NEXTFLOW_VERSION-all $GENOMIC_TOOLS/nextflow
 
 # Install Picard
 ENV PICARD_VERSION 2.18.0
@@ -77,7 +77,7 @@ RUN gcc -g -O2 -Wall -o wgsim wgsim.c -lz -lm
 WORKDIR $GENOMIC_TOOLS
 
 # Install Womtool
-ENV WOMTOOL_VERSION
+ENV WOMTOOL_VERSION 31
 ADD https://github.com/broadinstitute/cromwell/releases/download/$WOMTOOL_VERSION/womtool-$WOMTOOL_VERSION.jar $GENOMIC_TOOLS/womtool
 
 # Set permissions
