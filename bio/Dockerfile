@@ -1,5 +1,5 @@
 FROM taroull/spark:2.3.0 as spark
-FROM broadinstitute/gatk:4.0.2.1
+FROM broadinstitute/gatk:4.0.5.1
 
 # Update and install some useful packages
 RUN apt-get update && apt-get install -y curl
@@ -26,80 +26,89 @@ RUN ln -s $SPARK_HOME/conf $SPARK_CONF_DIR
 ENV PATH $SPARK_HOME/bin:$HADOOP_PREFIX/bin:$PATH
 ENV HADOOP_CLASSPATH $HADOOP_EXTRA_CLASSPATH
 
-# Patch gatk script to include our custom classpath first
-RUN sed -i /spark.driver.userClassPathFirst/s/^/#/ /gatk/gatk
-
 # Create directories for other genomic tools
 ENV GENOMIC_TOOLS /genomics/tools
-RUN mkdir -p $GENOMIC_TOOLS/bwa \
-             $GENOMIC_TOOLS/cromwell \
-             $GENOMIC_TOOLS/nextflow \
-             $GENOMIC_TOOLS/picard \
-             $GENOMIC_TOOLS/rabix \
-             $GENOMIC_TOOLS/samtools \
-             $GENOMIC_TOOLS/wgsim \
-             $GENOMIC_TOOLS/womtool
+WORKDIR $GENOMIC_TOOLS
 
 # Install BWA
 ENV BWA_VERSION 0.7.17
 ADD https://github.com/lh3/bwa/releases/download/v$BWA_VERSION/bwa-$BWA_VERSION.tar.bz2 /tmp/
-RUN tar -xvjf /tmp/bwa-$BWA_VERSION.tar.bz2 -C $GENOMIC_TOOLS/bwa \
+RUN tar -xvjf /tmp/bwa-$BWA_VERSION.tar.bz2 \
  && rm /tmp/bwa-$BWA_VERSION.tar.bz2*
-WORKDIR $GENOMIC_TOOLS/bwa/bwa-$BWA_VERSION
+WORKDIR bwa-$BWA_VERSION
 RUN make
+
 WORKDIR $GENOMIC_TOOLS
 
 # Install Cromwell
-ENV CROMWELL_VERSION 31
-ADD https://github.com/broadinstitute/cromwell/releases/download/$CROMWELL_VERSION/cromwell-$CROMWELL_VERSION.jar $GENOMIC_TOOLS/cromwell
+ENV CROMWELL_VERSION 32
+RUN mkdir cromwell-$CROMWELL_VERSION
+ADD https://github.com/broadinstitute/cromwell/releases/download/$CROMWELL_VERSION/cromwell-$CROMWELL_VERSION.jar cromwell-$CROMWELL_VERSION
+
+# Install Qualimap
+ENV QUALIMAP_VERSION 2.2.1
+ADD https://bitbucket.org/kokonech/qualimap/downloads/qualimap_v$QUALIMAP_VERSION.zip /tmp/
+RUN unzip /tmp/qualimap_v$QUALIMAP_VERSION.zip \
+ && rm /tmp/qualimap_v$QUALIMAP_VERSION.zip*
 
 # Install Nextflow
 ENV NEXTFLOW_VERSION 0.28.0
-ADD https://github.com/nextflow-io/nextflow/releases/download/v$NEXTFLOW_VERSION/nextflow-$NEXTFLOW_VERSION-all $GENOMIC_TOOLS/nextflow
+RUN mkdir nextflow-$NEXTFLOW_VERSION
+ADD https://github.com/nextflow-io/nextflow/releases/download/v$NEXTFLOW_VERSION/nextflow-$NEXTFLOW_VERSION-all nextflow-$NEXTFLOW_VERSION
 
 # Install Picard
 ENV PICARD_VERSION 2.18.0
-ADD https://github.com/broadinstitute/picard/releases/download/$PICARD_VERSION/picard.jar $GENOMIC_TOOLS/picard
+RUN mkdir picard-$PICARD_VERSION
+ADD https://github.com/broadinstitute/picard/releases/download/$PICARD_VERSION/picard.jar picard-$PICARD_VERSION
 
 # Install Rabix Executor
 ENV RABIX_VERSION 1.0.4
 ADD https://github.com/rabix/bunny/releases/download/v$RABIX_VERSION-5/rabix-$RABIX_VERSION.tar.gz /tmp/
-RUN tar -xzvf /tmp/rabix-$RABIX_VERSION.tar.gz -C $GENOMIC_TOOLS/rabix/ \
+RUN tar -xzvf /tmp/rabix-$RABIX_VERSION.tar.gz \
  && rm /tmp/rabix-$RABIX_VERSION.tar.gz*
 
 # Create soft link to existing Samtools
-RUN ln -s /usr/bin/samtools $GENOMIC_TOOLS/samtools/samtools
+RUN mkdir samtools-0.1.19 \
+ && ln -s /usr/bin/samtools samtools-0.1.19/samtools
+
+# Install Tabix
+RUN apt-get install tabix \
+ && mkdir tabix-1.2.1 \
+ && ln -s /usr/bin/tabix tabix-1.2.1/tabix
 
 # Install Wgsim
-RUN git clone https://github.com/lh3/wgsim.git
-WORKDIR $GENOMIC_TOOLS/wgsim
+ENV WGSIM_VERSION
+RUN git clone https://github.com/lh3/wgsim.git \
+ && mv wgsim wgsim-$WGSIM_VERSION
+WORKDIR $GENOMIC_TOOLS/wgsim-$WGSIM_VERSION
 RUN gcc -g -O2 -Wall -o wgsim wgsim.c -lz -lm
+
 WORKDIR $GENOMIC_TOOLS
 
 # Install Womtool
 ENV WOMTOOL_VERSION 31
-ADD https://github.com/broadinstitute/cromwell/releases/download/$WOMTOOL_VERSION/womtool-$WOMTOOL_VERSION.jar $GENOMIC_TOOLS/womtool
+RUN mkdir womtool-$WOMTOOL_VERSION
+ADD https://github.com/broadinstitute/cromwell/releases/download/$WOMTOOL_VERSION/womtool-$WOMTOOL_VERSION.jar womtool-$WOMTOOL_VERSION
 
 # Set permissions
-RUN chmod +x bwa/bwa-$BWA_VERSION/bwa \
-             cromwell/cromwell-$CROMWELL_VERSION.jar \
-             nextflow/nextflow-$NEXTFLOW_VERSION-all \
-             picard/picard.jar \
-             rabix/rabix-cli-$RABIX_VERSION/rabix \
-             wgsim/wgsim \
-             womtool/womtool-$WOMTOOL_VERSION.jar
+RUN chmod +x bwa-$BWA_VERSION/bwa \
+             cromwell-$CROMWELL_VERSION/cromwell-$CROMWELL_VERSION.jar \
+             nextflow-$NEXTFLOW_VERSION/nextflow-$NEXTFLOW_VERSION-all \
+             picard-$PICARD_VERSION/picard.jar \
+             qualimap_v$QUALIMAP_VERSION/qualimap.jar \
+             rabix-cli-$RABIX_VERSION/rabix \
+             wgsim-$WGSIM_VERSION/wgsim \
+             womtool-$WOMTOOL_VERSION/womtool-$WOMTOOL_VERSION.jar
 
 # Set aliases for easier usage
-ENV CROMWELL $GENOMIC_TOOLS/cromwell/cromwell-$CROMWELL_VERSION.jar
-ENV PICARD $GENOMIC_TOOLS/picard/picard.jar
-ENV WOMTOOL $GENOMIC_TOOLS/womtool/womtool-$WOMTOOL_VERSION.jar
-RUN echo "alias bwa=$GENOMIC_TOOLS/bwa/bwa-$BWA_VERSION/bwa" >> ~/.bashrc \
- && echo 'alias cromwell="java -jar $CROMWELL"' >> ~/.bashrc \
- && echo "alias nextflow=$GENOMIC_TOOLS/nextflow/nextflow-$NEXTFLOW_VERSION-all" >> ~/.bashrc \
- && echo 'alias picard="java -jar $PICARD"' >> ~/.bashrc \
- && echo "alias rabix=$GENOMIC_TOOLS/rabix/rabix-cli-$RABIX_VERSION/rabix" >> ~/.bashrc \
- && echo "alias wgsim=$GENOMIC_TOOLS/wgsim/wgsim" >> ~/.bashrc \
- && echo 'alias womtool="java -jar $WOMTOOL"' >> ~/.bashrc
+RUN echo "alias bwa=$GENOMIC_TOOLS/bwa-$BWA_VERSION/bwa" >> ~/.bashrc \
+ && echo 'alias cromwell="java -jar $GENOMIC_TOOLS/cromwell-$CROMWELL_VERSION/cromwell-$CROMWELL_VERSION.jar"' >> ~/.bashrc \
+ && echo "alias nextflow=$GENOMIC_TOOLS/nextflow-$NEXTFLOW_VERSION/nextflow-$NEXTFLOW_VERSION-all" >> ~/.bashrc \
+ && echo 'alias picard="java -jar $GENOMIC_TOOLS/picard-$PICARD_VERSION/picard.jar"' >> ~/.bashrc \
+ && echo 'alias qualimap="$GENOMIC_TOOLS/qualimap_v$QUALIMAP_VERSION/qualimap"' >> ~/.bashrc \
+ && echo "alias rabix=$GENOMIC_TOOLS/rabix-cli-$RABIX_VERSION/rabix" >> ~/.bashrc \
+ && echo "alias wgsim=$GENOMIC_TOOLS/wgsim-$WGSIM_VERSION/wgsim" >> ~/.bashrc \
+ && echo 'alias womtool="java -jar $GENOMIC_TOOLS/womtool-$WOMTOOL_VERSION/womtool-$WOMTOOL_VERSION.jar"' >> ~/.bashrc
 
 # Create default directory
 ENV DEFAULT_DIR /datos
@@ -111,11 +120,11 @@ ADD https://raw.githubusercontent.com/lubertorubior/docker-esit/master/test/run_
 RUN chmod +x /datos/run_tests.sh
 
 # Set locale
-RUN apt-get install -y locales
-RUN echo "LC_ALL=en_US.UTF-8" >> /etc/environment
-RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
-RUN echo "LANG=en_US.UTF-8" > /etc/locale.conf
-RUN locale-gen en_US.UTF-8
+RUN apt-get install -y locales \
+ && echo "LC_ALL=en_US.UTF-8" >> /etc/environment \
+ && echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
+ && echo "LANG=en_US.UTF-8" > /etc/locale.conf \
+ && locale-gen en_US.UTF-8
 
 # Install some nice packages
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
@@ -133,8 +142,9 @@ RUN apt-get install -y --fix-missing \
   xmlstarlet
 
 # Install SSH server and supervisor
-RUN apt-get update && apt-get install -y openssh-server supervisor
-RUN mkdir -p /var/run/sshd /var/log/supervisor
+RUN apt-get update \
+ && apt-get install -y openssh-server supervisor \
+ && mkdir -p /var/run/sshd /var/log/supervisor
 
 # Set SSH configuration
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
