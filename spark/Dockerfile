@@ -5,7 +5,7 @@ RUN pip install pyspark
 RUN pip3 install -q pyspark
 
 # Set spark environment data
-ENV SPARK_VERSION 2.3.0
+ENV SPARK_VERSION 2.3.1
 ENV SPARK_BIN_URL https://www.apache.org/dist/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-without-hadoop.tgz
 ENV SPARK_HOME /opt/spark-$SPARK_VERSION
 ENV SPARK_CONF_DIR /etc/spark
