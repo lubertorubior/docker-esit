@@ -36,6 +36,14 @@ RUN curl -fSL "$HADOOP_URL" -o /tmp/hadoop.tar.gz \
     && ln -s $HADOOP_PREFIX/etc/hadoop $HADOOP_CONF_DIR \
     && cp $HADOOP_CONF_DIR/mapred-site.xml.template $HADOOP_CONF_DIR/mapred-site.xml
 
+# Update avro library to fix NoSuchMethodError issue
+# View: https://groups.google.com/forum/#!topic/adam-developers/KwxDbRzLdwY
+ENV AVRO_VERSION 1.7.7
+ENV AVRO_URL https://repo1.maven.org/maven2/org/apache/avro/avro/$AVRO_VERSION/avro-$AVRO_VERSION.jar
+RUN curl -fSL "$AVRO_URL" -o /tmp/avro-$AVRO_VERSION.jar
+RUN find HADOOP_PREFIX/share/hadoop/ -type f -name "*avro*jar" | while read LINE; do cp /tmp/avro-$AVRO_VERSION.jar $(dirname "$LINE") && rm "$LINE"; done \
+ && rm /tmp/avro-$AVRO_VERSION.jar
+
 # Add custom libs to the hadoop classpath
 ENV HADOOP_EXTRA_CLASSPATH /opt/lib/hadoop
 ENV HADOOP_CLASSPATH $HADOOP_EXTRA_CLASSPATH/*
@@ -49,6 +57,7 @@ ENV PATH $HADOOP_PREFIX/bin/:$PATH
 # Download config files
 ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/core-site.xml $HADOOP_CONF_DIR
 ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/hdfs-site.xml $HADOOP_CONF_DIR
+ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/httpfs-site.xml $HADOOP_CONF_DIR
 ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/mapred-site.xml $HADOOP_CONF_DIR
 ADD https://github.com/lubertorubior/docker-esit/raw/master/conf/hadoop/yarn-site.xml $HADOOP_CONF_DIR
 #COPY conf/* $HADOOP_CONF_DIR/
