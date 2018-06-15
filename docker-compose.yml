@@ -111,7 +111,7 @@ services:
           - node.hostname == l5
 
   spark:
-    image: taroull/spark:2.3.0
+    image: taroull/spark:2.3.1
     networks: 
        - hadoop
     volumes:
@@ -155,11 +155,11 @@ services:
           - node.hostname == l5
             
   bio:
-    image: taroull/bio:4.0.2.1b
+    image: taroull/bio:4.0.5.1
     networks:
       - hadoop
-    environment:
-      - ADD_TO_SPARK_CLASSPATH=https://github.com/lubertorubior/docker-esit/raw/master/jars/spark/avro-1.7.7.jar
+    #environment:
+      #- ADD_TO_SPARK_CLASSPATH=https://github.com/lubertorubior/docker-esit/raw/master/jars/spark/avro-1.7.7.jar
     secrets:
       - host_password
     ports:
