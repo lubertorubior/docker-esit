@@ -41,7 +41,7 @@ RUN curl -fSL "$HADOOP_URL" -o /tmp/hadoop.tar.gz \
 ENV AVRO_VERSION 1.7.7
 ENV AVRO_URL https://repo1.maven.org/maven2/org/apache/avro/avro/$AVRO_VERSION/avro-$AVRO_VERSION.jar
 RUN curl -fSL "$AVRO_URL" -o /tmp/avro-$AVRO_VERSION.jar
-RUN find HADOOP_PREFIX/share/hadoop/ -type f -name "*avro*jar" | while read LINE; do cp /tmp/avro-$AVRO_VERSION.jar $(dirname "$LINE") && rm "$LINE"; done \
+RUN find $HADOOP_PREFIX/share/hadoop/ -type f -name "*avro*jar" | while read LINE; do cp /tmp/avro-$AVRO_VERSION.jar $(dirname "$LINE") && rm "$LINE"; done \
  && rm /tmp/avro-$AVRO_VERSION.jar
 
 # Add custom libs to the hadoop classpath
