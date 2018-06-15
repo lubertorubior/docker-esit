@@ -1,4 +1,4 @@
-FROM taroull/spark:2.3.0
+FROM taroull/spark:2.3.1
 
 # Web
 EXPOSE 18080

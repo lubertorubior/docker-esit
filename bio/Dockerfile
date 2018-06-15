@@ -9,7 +9,7 @@ ENV HADOOP_VERSION 2.8.3
 ENV HADOOP_PREFIX /opt/hadoop-$HADOOP_VERSION
 ENV HADOOP_CONF_DIR /etc/hadoop
 ENV HADOOP_EXTRA_CLASSPATH /opt/lib/hadoop
-ENV SPARK_VERSION 2.3.0
+ENV SPARK_VERSION 2.3.1
 ENV SPARK_HOME /opt/spark-$SPARK_VERSION
 ENV SPARK_CONF_DIR /etc/spark
 ENV SPARK_EXTRA_CLASSPATH /opt/lib/spark
@@ -48,8 +48,8 @@ ADD https://github.com/broadinstitute/cromwell/releases/download/$CROMWELL_VERSI
 # Install FastQC
 ENV FASTQC_VERSION 0.11.7
 ADD https://github.com/s-andrews/FastQC/archive/v$FASTQC_VERSION.tar.gz /tmp/
-RUN tar -xvjf /tmp/FastQC-$FASTQC_VERSION.tar.gz \
- && rm /tmp/FastQC-$FASTQC_VERSION.tar.gz*
+RUN tar -xzvf /tmp/v$FASTQC_VERSION.tar.gz \
+ && rm /tmp/v$FASTQC_VERSION.tar.gz*
 
 # Install Qualimap
 ENV QUALIMAP_VERSION 2.2.1
@@ -83,7 +83,7 @@ RUN apt-get install tabix \
  && ln -s /usr/bin/tabix tabix-1.2.1/tabix
 
 # Install Wgsim
-ENV WGSIM_VERSION 0.3.1 
+ENV WGSIM_VERSION 0.3.1
 RUN git clone https://github.com/lh3/wgsim.git \
  && mv wgsim wgsim-$WGSIM_VERSION
 WORKDIR $GENOMIC_TOOLS/wgsim-$WGSIM_VERSION
