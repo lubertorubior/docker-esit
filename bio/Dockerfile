@@ -45,6 +45,12 @@ ENV CROMWELL_VERSION 32
 RUN mkdir cromwell-$CROMWELL_VERSION
 ADD https://github.com/broadinstitute/cromwell/releases/download/$CROMWELL_VERSION/cromwell-$CROMWELL_VERSION.jar cromwell-$CROMWELL_VERSION
 
+# Install FastQC
+ENV FASTQC_VERSION 0.11.7
+ADD https://github.com/s-andrews/FastQC/archive/v$FASTQC_VERSION.tar.gz /tmp/
+RUN tar -xvjf /tmp/FastQC-$FASTQC_VERSION.tar.gz \
+ && rm /tmp/FastQC-$FASTQC_VERSION.tar.gz*
+
 # Install Qualimap
 ENV QUALIMAP_VERSION 2.2.1
 ADD https://bitbucket.org/kokonech/qualimap/downloads/qualimap_v$QUALIMAP_VERSION.zip /tmp/
@@ -93,6 +99,7 @@ ADD https://github.com/broadinstitute/cromwell/releases/download/$WOMTOOL_VERSIO
 # Set permissions
 RUN chmod +x bwa-$BWA_VERSION/bwa \
              cromwell-$CROMWELL_VERSION/cromwell-$CROMWELL_VERSION.jar \
+             FastQC-$FASTQC_VERSION/fastqc \
              nextflow-$NEXTFLOW_VERSION/nextflow-$NEXTFLOW_VERSION-all \
              picard-$PICARD_VERSION/picard.jar \
              qualimap_v$QUALIMAP_VERSION/qualimap.jar \
@@ -103,6 +110,7 @@ RUN chmod +x bwa-$BWA_VERSION/bwa \
 # Set aliases for easier usage
 RUN echo "alias bwa=$GENOMIC_TOOLS/bwa-$BWA_VERSION/bwa" >> ~/.bashrc \
  && echo 'alias cromwell="java -jar $GENOMIC_TOOLS/cromwell-$CROMWELL_VERSION/cromwell-$CROMWELL_VERSION.jar"' >> ~/.bashrc \
+ && echo "alias fastqc=$GENOMIC_TOOLS/FastQC-$FASTQC_VERSION/fastqc" >> ~/.bashrc \
  && echo "alias nextflow=$GENOMIC_TOOLS/nextflow-$NEXTFLOW_VERSION/nextflow-$NEXTFLOW_VERSION-all" >> ~/.bashrc \
  && echo 'alias picard="java -jar $GENOMIC_TOOLS/picard-$PICARD_VERSION/picard.jar"' >> ~/.bashrc \
  && echo 'alias qualimap="$GENOMIC_TOOLS/qualimap_v$QUALIMAP_VERSION/qualimap"' >> ~/.bashrc \
