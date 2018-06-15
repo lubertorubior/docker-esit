@@ -83,7 +83,7 @@ RUN apt-get install tabix \
  && ln -s /usr/bin/tabix tabix-1.2.1/tabix
 
 # Install Wgsim
-ENV WGSIM_VERSION
+ENV WGSIM_VERSION 0.3.1 
 RUN git clone https://github.com/lh3/wgsim.git \
  && mv wgsim wgsim-$WGSIM_VERSION
 WORKDIR $GENOMIC_TOOLS/wgsim-$WGSIM_VERSION
