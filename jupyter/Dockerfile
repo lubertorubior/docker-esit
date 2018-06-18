@@ -1,4 +1,4 @@
-FROM docker-esit/spark:2.3.0 as spark
+FROM taroull/spark:2.3.1 as spark
 FROM jupyter/all-spark-notebook
 
 #USER root
@@ -60,7 +60,7 @@ ENV HADOOP_CLASSPATH $HADOOP_EXTRA_CLASSPATH
 
 # Copy spark conf from spark image
 COPY --from=spark /etc/spark/spark-defaults.conf $SPARK_HOME/conf/spark-defaults.conf
-RUN sed -i '/avro/d' $SPARK_HOME/conf/spark-defaults.conf
+#RUN sed -i '/avro/d' $SPARK_HOME/conf/spark-defaults.conf
 
 # Remove current spark symlink
 #RUN rm /usr/local/spark
@@ -74,12 +74,14 @@ RUN sed -i '/avro/d' $SPARK_HOME/conf/spark-defaults.conf
 #VOLUME /notebooks
 #WORKDIR /notebooks
 
+COPY conf/spark-env.sh /usr/local/spark/conf/spark-env.sh
 # Grant $NB_USER
 RUN mkdir -p $HADOOP_EXTRA_CLASSPATH $SPARK_EXTRA_CLASSPATH
 RUN fix-permissions $HADOOP_PREFIX && \
     #fix-permissions $HADOOP_CONF_DIR && \
     fix-permissions $HADOOP_EXTRA_CLASSPATH && \
     fix-permissions $SPARK_HOME/conf/spark-defaults.conf && \
+    fix-permissions $SPARK_HOME/conf/spark-env.sh && \
     #fix-permissions $SPARK_CONF_DIR && \
     fix-permissions $SPARK_EXTRA_CLASSPATH
 

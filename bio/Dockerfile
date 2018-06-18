@@ -30,6 +30,28 @@ ENV HADOOP_CLASSPATH $HADOOP_EXTRA_CLASSPATH
 ENV GENOMIC_TOOLS /genomics/tools
 WORKDIR $GENOMIC_TOOLS
 
+# Install Bcftools
+ENV BCFTOOLS_VERSION 1.8
+ADD https://github.com/samtools/bcftools/releases/download/$BCFTOOLS_VERSION/bcftools-$BCFTOOLS_VERSION.tar.bz2 /tmp/
+RUN tar -xvjf /tmp/bcftools-$BCFTOOLS_VERSION.tar.bz2 \
+ && rm /tmp/bcftools-$BCFTOOLS_VERSION.tar.bz2*
+WORKDIR bcftools-$BCFTOOLS_VERSION
+RUN make \
+ && make install
+
+WORKDIR $GENOMIC_TOOLS
+
+# Install Bedtools
+ENV BEDTOOLS_VERSION 2.27.1
+ADD https://github.com/arq5x/bedtools2/releases/download/v$BEDTOOLS_VERSION/bedtools-$BEDTOOLS_VERSION.tar.gz /tmp/
+RUN tar -xzvf /tmp/bedtools-$BEDTOOLS_VERSION.tar.gz \
+ && mv bedtools2 bedtools-$BEDTOOLS_VERSION \
+ && rm /tmp/bedtools-$BEDTOOLS_VERSION.tar.gz*
+WORKDIR bedtools-$BEDTOOLS_VERSION
+RUN make
+
+WORKDIR $GENOMIC_TOOLS
+
 # Install BWA
 ENV BWA_VERSION 0.7.17
 ADD https://github.com/lh3/bwa/releases/download/v$BWA_VERSION/bwa-$BWA_VERSION.tar.bz2 /tmp/
@@ -55,6 +77,7 @@ RUN tar -xzvf /tmp/v$FASTQC_VERSION.tar.gz \
 ENV QUALIMAP_VERSION 2.2.1
 ADD https://bitbucket.org/kokonech/qualimap/downloads/qualimap_v$QUALIMAP_VERSION.zip /tmp/
 RUN unzip /tmp/qualimap_v$QUALIMAP_VERSION.zip \
+ && mv qualimap_v$QUALIMAP_VERSION qualimap-$QUALIMAP_VERSION \
  && rm /tmp/qualimap_v$QUALIMAP_VERSION.zip*
 
 # Install Nextflow
@@ -82,6 +105,21 @@ RUN apt-get install tabix \
  && mkdir tabix-1.2.1 \
  && ln -s /usr/bin/tabix tabix-1.2.1/tabix
 
+# Install VCFtools
+ENV VCFTOOLS_VERSION 0.1.15
+ADD https://github.com/vcftools/vcftools/releases/download/v$VCFTOOLS_VERSION/vcftools-$VCFTOOLS_VERSION.tar.gz /tmp/
+RUN tar -xzvf /tmp/vcftools-$VCFTOOLS_VERSION.tar.gz
+WORKDIR vcftools-$VCFTOOLS_VERSION
+RUN apt-get install pkg-config \
+ && ./autogen.sh \
+ && ./configure \
+ && make \
+ && make install \
+ && ln -s /usr/local/bin/vcftools \
+ && rm /tmp/vcftools-$VCFTOOLS_VERSION.tar.gz*
+
+WORKDIR $GENOMIC_TOOLS
+
 # Install Wgsim
 ENV WGSIM_VERSION 0.3.1
 RUN git clone https://github.com/lh3/wgsim.git \
@@ -97,24 +135,30 @@ RUN mkdir womtool-$WOMTOOL_VERSION
 ADD https://github.com/broadinstitute/cromwell/releases/download/$WOMTOOL_VERSION/womtool-$WOMTOOL_VERSION.jar womtool-$WOMTOOL_VERSION
 
 # Set permissions
-RUN chmod +x bwa-$BWA_VERSION/bwa \
+RUN chmod +x bcftools-$BCFTOOLS_VERSION/bcftools \
+             bedtools-$BEDTOOLS_VERSION/bin/bedtools \
+             bwa-$BWA_VERSION/bwa \
              cromwell-$CROMWELL_VERSION/cromwell-$CROMWELL_VERSION.jar \
              FastQC-$FASTQC_VERSION/fastqc \
              nextflow-$NEXTFLOW_VERSION/nextflow-$NEXTFLOW_VERSION-all \
              picard-$PICARD_VERSION/picard.jar \
-             qualimap_v$QUALIMAP_VERSION/qualimap.jar \
+             qualimap-$QUALIMAP_VERSION/qualimap.jar \
              rabix-cli-$RABIX_VERSION/rabix \
+             vcftools-$VCFTOOLS_VERSION/vcftools \
              wgsim-$WGSIM_VERSION/wgsim \
              womtool-$WOMTOOL_VERSION/womtool-$WOMTOOL_VERSION.jar
 
 # Set aliases for easier usage
-RUN echo "alias bwa=$GENOMIC_TOOLS/bwa-$BWA_VERSION/bwa" >> ~/.bashrc \
+RUN echo "alias bcftools=$GENOMIC_TOOLS/bcftools-$BCFTOOLS_VERSION/bcftools" >> ~/.bashrc \
+ && echo "alias bedtools=$GENOMIC_TOOLS/bedtools-$BEDTOOLS_VERSION/bin/bedtools" >> ~/.bashrc \
+ && echo "alias bwa=$GENOMIC_TOOLS/bwa-$BWA_VERSION/bwa" >> ~/.bashrc \
  && echo 'alias cromwell="java -jar $GENOMIC_TOOLS/cromwell-$CROMWELL_VERSION/cromwell-$CROMWELL_VERSION.jar"' >> ~/.bashrc \
  && echo "alias fastqc=$GENOMIC_TOOLS/FastQC-$FASTQC_VERSION/fastqc" >> ~/.bashrc \
  && echo "alias nextflow=$GENOMIC_TOOLS/nextflow-$NEXTFLOW_VERSION/nextflow-$NEXTFLOW_VERSION-all" >> ~/.bashrc \
  && echo 'alias picard="java -jar $GENOMIC_TOOLS/picard-$PICARD_VERSION/picard.jar"' >> ~/.bashrc \
  && echo 'alias qualimap="$GENOMIC_TOOLS/qualimap_v$QUALIMAP_VERSION/qualimap"' >> ~/.bashrc \
  && echo "alias rabix=$GENOMIC_TOOLS/rabix-cli-$RABIX_VERSION/rabix" >> ~/.bashrc \
+ && echo "alias vcftools=$GENOMIC_TOOLS/vcftools-$VCFTOOLS_VERSION/vcftools" >> ~/.bashrc \
  && echo "alias wgsim=$GENOMIC_TOOLS/wgsim-$WGSIM_VERSION/wgsim" >> ~/.bashrc \
  && echo 'alias womtool="java -jar $GENOMIC_TOOLS/womtool-$WOMTOOL_VERSION/womtool-$WOMTOOL_VERSION.jar"' >> ~/.bashrc
 
