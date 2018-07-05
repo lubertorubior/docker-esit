@@ -67,4 +67,4 @@
 # You might get better performance to enable these options if using native BLAS (see SPARK-21305).
 # - MKL_NUM_THREADS=1        Disable multi-threading of Intel MKL
 # - OPENBLAS_NUM_THREADS=1   Disable multi-threading of OpenBLAS
-HADOOP_CONF_DIR=/usr/local/hadoop-2.8.3/etc/hadoop
+HADOOP_CONF_DIR=/usr/local/hadoop-2.8.4/etc/hadoop

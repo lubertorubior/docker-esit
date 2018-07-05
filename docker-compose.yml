@@ -3,7 +3,7 @@ version: '3.2'
 services:
 
   namenode:
-    image: taroull/hadoop-namenode:2.8.3
+    image: taroull/hadoop-namenode:2.8.4
     hostname: namenode
     networks:
       - hadoop
@@ -28,7 +28,7 @@ services:
           - node.hostname == l5
 
   datanode:
-    image: taroull/hadoop-datanode:2.8.3
+    image: taroull/hadoop-datanode:2.8.4
     # Unique hostname
     #hostname: "{{.Node.Hostname}}.etsii.ull.es"
     depends_on:
@@ -47,7 +47,7 @@ services:
         delay: 5s
 
   resourcemanager:
-    image: taroull/hadoop-resourcemanager:2.8.3
+    image: taroull/hadoop-resourcemanager:2.8.4
     hostname: resourcemanager
     networks: 
       - hadoop
@@ -69,7 +69,7 @@ services:
           - node.hostname == l5
 
   nodemanager:
-    image: taroull/hadoop-nodemanager:2.8.3
+    image: taroull/hadoop-nodemanager:2.8.4
     #hostname: "{{.Node.Hostname}}.etsii.ull.es"
     environment:
       - ADD_TO_HADOOP_CLASSPATH=https://github.com/lubertorubior/docker-esit/raw/master/jars/hadoop/spark-2.3.0-yarn-shuffle.jar
@@ -92,7 +92,7 @@ services:
            memory: 5G
 
   hadoop-historyserver:
-    image: taroull/hadoop-historyserver:2.8.3  
+    image: taroull/hadoop-historyserver:2.8.4  
     hostname: hadoop-historyserver
     depends_on:
       - namenode
@@ -155,7 +155,7 @@ services:
           - node.hostname == l5
             
   bio:
-    image: taroull/bio:4.0.5.1
+    image: taroull/bio:4.0.5.2
     networks:
       - hadoop
     #environment:

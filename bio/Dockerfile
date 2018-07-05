@@ -1,11 +1,11 @@
 FROM taroull/spark:2.3.1 as spark
-FROM broadinstitute/gatk:4.0.5.1
+FROM broadinstitute/gatk:4.0.5.2
 
 # Update and install some useful packages
 RUN apt-get update && apt-get install -y curl
 
 # Set hadoop and spark environment data
-ENV HADOOP_VERSION 2.8.3
+ENV HADOOP_VERSION 2.8.4
 ENV HADOOP_PREFIX /opt/hadoop-$HADOOP_VERSION
 ENV HADOOP_CONF_DIR /etc/hadoop
 ENV HADOOP_EXTRA_CLASSPATH /opt/lib/hadoop
@@ -63,7 +63,7 @@ RUN make
 WORKDIR $GENOMIC_TOOLS
 
 # Install Cromwell
-ENV CROMWELL_VERSION 32
+ENV CROMWELL_VERSION 33.1
 RUN mkdir cromwell-$CROMWELL_VERSION
 ADD https://github.com/broadinstitute/cromwell/releases/download/$CROMWELL_VERSION/cromwell-$CROMWELL_VERSION.jar cromwell-$CROMWELL_VERSION
 

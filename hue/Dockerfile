@@ -1,4 +1,4 @@
-FROM taroull/hadoop:2.8.3 as hadoop
+FROM taroull/hadoop:2.8.4 as hadoop
 FROM gethue/hue:4.1.0
 
 # Download useful packages
@@ -14,7 +14,7 @@ FROM gethue/hue:4.1.0
 #ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 
 # Set hadoop environment data
-#ENV HADOOP_VERSION 2.8.3
+#ENV HADOOP_VERSION 2.8.4
 #ENV HADOOP_PREFIX /opt/hadoop-$HADOOP_VERSION
 #ENV HADOOP_CONF_DIR /etc/hadoop
 #ENV HADOOP_EXTRA_CLASSPATH /opt/lib/hadoop

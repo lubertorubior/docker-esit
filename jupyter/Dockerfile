@@ -8,7 +8,7 @@ FROM jupyter/all-spark-notebook
 #RUN pip install --upgrade jupyter
 
 # Set hadoop and spark environment data
-ENV HADOOP_VERSION 2.8.3
+ENV HADOOP_VERSION 2.8.4
 ENV HADOOP_PREFIX /usr/local/hadoop-$HADOOP_VERSION
 ENV HADOOP_HOME /usr/local/hadoop-$HADOOP_VERSION
 ENV HADOOP_CONF_DIR $HADOOP_PREFIX/etc/hadoop
@@ -29,7 +29,7 @@ RUN apt-get upgrade && apt-get update \
     && apt-get install -y xmlstarlet
 
 # Set hadoop and spark environment data
-#ENV HADOOP_VERSION 2.8.3
+#ENV HADOOP_VERSION 2.8.4
 #ENV HADOOP_PREFIX /usr/local/hadoop-$HADOOP_VERSION
 #ENV HADOOP_CONF_DIR /usr/local/hadoop-$HADOOP_VERSION/etc/hadoop
 #ENV HADOOP_EXTRA_CLASSPATH /opt/lib/hadoop
