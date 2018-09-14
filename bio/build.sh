@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t taroull/bio:4.0.5.2 .
+docker build -t taroull/bio:4.0.8.1 .

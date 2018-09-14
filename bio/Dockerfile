@@ -1,8 +1,8 @@
 FROM taroull/spark:2.3.1 as spark
-FROM broadinstitute/gatk:4.0.5.2
+FROM broadinstitute/gatk:4.0.8.1
 
 # Update and install some useful packages
-RUN apt-get update && apt-get install -y curl
+RUN apt-get update && apt-get install -y curl git-all
 
 # Set hadoop and spark environment data
 ENV HADOOP_VERSION 2.8.4
