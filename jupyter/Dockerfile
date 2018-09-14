@@ -13,7 +13,13 @@ ENV HADOOP_PREFIX /usr/local/hadoop-$HADOOP_VERSION
 ENV HADOOP_HOME /usr/local/hadoop-$HADOOP_VERSION
 ENV HADOOP_CONF_DIR $HADOOP_PREFIX/etc/hadoop
 ENV HADOOP_EXTRA_CLASSPATH /opt/lib/hadoop
+ENV HADOOP_COMMON_LIB_NATIVE_DIR $HADOOP_HOME/lib/native
+ENV HADOOP_OPTS "-Djava.library.path=$HADOOP_COMMON_LIB_NATIVE_DIR"
 ENV SPARK_EXTRA_CLASSPATH /opt/lib/spark
+ENV LIVY_VERSION 0.4.0
+#ENV PYSPARK_PYTHON /usr/bin/python3
+#ENV PYSPARK_DRIVER_PYTHON ipython3
+#ENV PYSPARK_DRIVER_PYTHON_OPTS "notebook"
 
 USER root
 
@@ -27,6 +33,8 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 # Install some useful packages
 RUN apt-get upgrade && apt-get update \
     && apt-get install -y xmlstarlet
+    #\
+    #&& apt-get install -y python3-pip
 
 # Set hadoop and spark environment data
 #ENV HADOOP_VERSION 2.8.4
@@ -85,6 +93,45 @@ RUN fix-permissions $HADOOP_PREFIX && \
     #fix-permissions $SPARK_CONF_DIR && \
     fix-permissions $SPARK_EXTRA_CLASSPATH
 
+# Download and unpack livy
+RUN curl -fSL http://archive.apache.org/dist/incubator/livy/${LIVY_VERSION}-incubating/livy-${LIVY_VERSION}-incubating-bin.zip -o /tmp/livy.zip \
+    && unzip /tmp/livy.zip -d /usr/local/ \
+    && rm /tmp/livy.zip* \
+    && mkdir /usr/local/livy-${LIVY_VERSION}-incubating-bin/logs \
+    && fix-permissions /usr/local/livy-${LIVY_VERSION}-incubating-bin/
+
+# Copy livy conf
+COPY conf/livy/* /usr/local/livy-${LIVY_VERSION}-incubating-bin/conf/
+
+# livy server
+EXPOSE 8998
+
+RUN fix-permissions /home/jovyan/.cache/ \
+  && pip install --upgrade pip \
+  && pip install pyspark
+  #\
+  #&& pip3 install pyspark
+
+# Install sparkmagic
+RUN pip install pandas==0.22.0 \
+ && pip install sparkmagic
+
+# Enable notebook extension
+RUN jupyter nbextension enable --py --sys-prefix widgetsnbextension
+
+# Install wrapper kernels
+WORKDIR /opt/conda/lib/python3.6/site-packages/
+RUN jupyter-kernelspec install sparkmagic/kernels/sparkkernel --user \
+ && jupyter-kernelspec install sparkmagic/kernels/pysparkkernel --user \
+ && jupyter-kernelspec install sparkmagic/kernels/pyspark3kernel --user \
+ && jupyter-kernelspec install sparkmagic/kernels/sparkrkernel --user
+
+# Copy sparkmagic conf
+COPY conf/sparkmagic/* /home/jovyan/.sparkmagic/
+
+# Enable server extension
+RUN jupyter serverextension enable --py sparkmagic
+
 # Create workdir
 RUN mkdir /notebooks \
  && fix-permissions /notebooks
@@ -112,10 +159,27 @@ RUN fix-permissions /docker-entrypoint.d/ && chmod +x /docker-entrypoint.d/*
 
 #CMD ["jupyter", "notebook", "--notebook-dir", "/notebooks", "--no-browser", "--allow-root", "--ip='0.0.0.0'"]
 
-RUN jupyter toree install --sys-prefix --spark_opts="--master yarn --deploy-mode cluster" --interpreters=PySpark \
- && rm -rf /home/$NB_USER/.local \
- && fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+#RUN pip install https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0/snapshots/dev1/toree-pip/toree-0.2.0.dev1.tar.gz
+#RUn fix-permissions /usr/local/share/jupyter
+
+#RUN jupyter toree install --sys-prefix --spark_opts="--master yarn --deploy-mode cluster" --interpreters=PySpark \
+# && rm -rf /home/$NB_USER/.local \
+# && fix-permissions $CONDA_DIR && \
+#    fix-permissions /home/$NB_USER
 
 #ENTRYPOINT ["jupyter", "notebook", "--no-browser", "--allow-root"]
-USER $NB_USER
+
+USER root
+
+# Install supervisor
+RUN apt-get update \
+ && apt-get install -y supervisor \
+ && mkdir -p /var/log/supervisor
+
+# Copy supervisor configuration
+COPY conf/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+RUN fix-permissions /var/log/supervisor/
+
+CMD ["/usr/bin/supervisord"]
+
+#USER $NB_USER
