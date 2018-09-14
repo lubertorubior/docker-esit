@@ -156,7 +156,7 @@ services:
           - node.hostname == l5
             
   bio:
-    image: taroull/bio:4.0.5.2
+    image: taroull/bio:4.0.8.1
     networks:
       - hadoop
     #environment:
