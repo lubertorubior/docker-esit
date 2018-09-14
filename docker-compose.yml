@@ -53,6 +53,7 @@ services:
       - hadoop
     ports:
       - "8088:8088"
+      - "8032:8032"
     environment:
       - YARN_HEAPSIZE=1024
     logging:
@@ -200,12 +201,22 @@ services:
       placement:
         constraints: [node.hostname == l5 ]
 
+  portainer:
+    image: portainer/portainer
+    ports:
+      - "9000:9000"
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
   jupyter:
     image: taroull/jupyter
     networks:
       - hadoop
     ports:
       - "8888:8888"
+      - "8998:8998"
     volumes:
       - notebooks:/notebooks
     logging:
@@ -252,6 +263,7 @@ volumes:
   data:
   hue-conf:
   notebooks:
+  portainer_data:
 
 networks:
   hadoop:
