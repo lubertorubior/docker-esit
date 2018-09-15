@@ -1,4 +1,4 @@
-# docker-big-data-bio
+# docker-big-bio
 
 This repository contains a dockerized collection of NGS tools along with Hadoop (HDFS and YARN), Spark, JupyterLab and other complementary software for distributed NGS data processing and analysis. With these Docker images, you can deploy a scalable cluster to be managed using Docker Swarm mode.
 
