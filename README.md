@@ -1,4 +1,4 @@
-# docker-bd-bio
+# docker-esit
 
 This repository contains a dockerized collection of NGS tools along with Hadoop (HDFS and YARN), Spark, JupyterLab and other complementary software for distributed NGS data processing and analysis. With these Docker images, you can deploy a scalable cluster to use with Docker Swarm and Docker Compose.
 
