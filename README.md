@@ -3,13 +3,13 @@
 This repository contains a dockerized collection of NGS tools along with Hadoop (HDFS and YARN), Spark, JupyterLab and other complementary software for distributed NGS data processing and analysis. With these Docker images, you can deploy a scalable cluster to be managed using Docker Swarm mode.
 
 The images provide:
-* Hadoop 2.8.8
-* Spark 2.1
+* Hadoop 2.8.4
+* Spark 2.3.1
 * JupyterLab 0.34.0
 * BCFtools 1.8
 * BEDtools 2.27.1
 * BWA 0.7.17
-* Cromwell 34
+* Cromwell 31
 * FastQC 0.11.7
 * GATK 4.0.8.1
 * Nextflow 0.28.0
@@ -19,7 +19,7 @@ The images provide:
 * SAMtools 0.1.19
 * Tabix 1.2.1
 * VCFtools 0.1.15
-* WOMtool 34
+* WOMtool 31
 * Wgsim 0.3.1
 
 ## Prerequisities
