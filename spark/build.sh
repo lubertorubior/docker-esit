@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build -t taroull/spark:2.3.1 .
+docker build -t taroull/spark:2.3.2 .

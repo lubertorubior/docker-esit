@@ -112,7 +112,7 @@ services:
           - node.hostname == l5
 
   spark:
-    image: taroull/spark:2.3.1
+    image: taroull/spark:2.3.2
     networks: 
        - hadoop
     volumes:
