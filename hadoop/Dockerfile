@@ -23,7 +23,7 @@ RUN pip install pip --upgrade
 RUN pip3 install -q --upgrade pip
 
 # Set hadoop environment data
-ENV HADOOP_VERSION 2.8.4
+ENV HADOOP_VERSION 2.8.5
 ENV HADOOP_URL https://www.apache.org/dist/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz
 ENV HADOOP_PREFIX /opt/hadoop-$HADOOP_VERSION
 ENV HADOOP_CONF_DIR /etc/hadoop

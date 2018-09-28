@@ -1,4 +1,4 @@
-FROM taroull/hadoop:2.8.4
+FROM taroull/hadoop:2.8.5
 
 # Web
 EXPOSE 8088
