@@ -1,5 +1,5 @@
 FROM taroull/spark:2.3.1 as spark
-FROM broadinstitute/gatk:4.0.8.1
+FROM broadinstitute/gatk:4.0.9.0
 
 # Update and install some useful packages
 RUN apt-get update && apt-get install -y curl git-all
