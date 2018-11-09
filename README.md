@@ -52,4 +52,6 @@ There is one main interface available on http://localhost:80 to access the diffe
 
 ## Acknowledgements
 Funded by Ministerio de Ciencia, Innovación y Universidades (RTC-2017-6471-1; MINECO/AEI/FEDER, UE) and also supported by the CEDeI program (Centro de Excelencia de Desarrollo e Innovación, Cabildo de Tenerife). Special thanks to the TARO research group at Universidad de La Laguna for their guidance and support.
-![Logos]()
+
+
+![](https://user-images.githubusercontent.com/10713136/48264746-79e6f400-e422-11e8-8444-062a38091f58.png)
