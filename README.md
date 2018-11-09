@@ -1,32 +1,32 @@
-# docker-esit
+![](https://user-images.githubusercontent.com/10713136/48259793-16a09600-e411-11e8-83b4-5a6a6546c55a.png)
 
-This repository contains a dockerized collection of NGS tools along with Hadoop (HDFS and YARN), Spark, JupyterLab and other complementary software for distributed NGS data processing and analysis. With these Docker images, you can deploy a scalable cluster to use with Docker Swarm and Docker Compose.
+# Dockerized Bioinformatic architecture based on Big Data technologies to process data from whole-genome sequencing
 
-The images provide:
-* Hadoop 2.8.5
-* Spark 2.3.2
-* JupyterLab 0.34.0
-* BCFtools 1.8
-* BEDtools 2.27.1
-* BWA 0.7.17
-* Cromwell 31
-* FastQC 0.11.7
-* GATK 4.0.9.0
-* Nextflow 0.28.0
-* Picard 2.18.0
-* Qualimap 2.2.1
-* Rabix 1.0.5
-* SAMtools 0.1.19
-* Tabix 1.2.1
-* VCFtools 0.1.15
-* WOMtool 31
-* Wgsim 0.3.1
+This repository presents a Docker container-based infrastructure for NGS data analysis comprising Bioinformatics and Big Data tools (Hadoop and Spark). There are Docker images available for the Hadoop and Spark components and a set of bioinformatics software, including QC applications (FastQC, MultiQC, Qualimap2), aligners (BWA), variant callers (GATK4, Platypus), and other supplementary software (JupyterLab). See list below:
 
-## Prerequisities
-In order to run the provided images you'll need Docker installed. These images are tested on Docker CE for Ubuntu 16.04 (Docker version 18.06.1-ce, build e68fc7a).
+![]()
+
+This application is supposed to be deployed in a cluster of nodes for best performance but it will also work on a single node. Docker Compose is used for multi-container definition and Docker Swarm for container orchestration and cluster management.
+
+![]()
+
+See this [poster]() if you want to know more this project.
+
+# Contents
+* [Background](#background)
+* [Getting started](#getting-started)
+* [Usage](#usage)
+* [Configuration](#configuration)
+* [Interfaces](#interfaces)
+
+## Background
+Next-generation Sequencing (NGS) data imposes major challenges for processing due to its volume and complexity. Analysis of NGS data is generally based on many third party software, which are sometimes complex to install, configure and usually have dependencies that may lead to portability and reproducibility issues. Thus, it is necessary to develop infrastructures to store, manage and analyse massive genomic data in an efficient, scalable and reproducible way.
+
+## Getting started
+In order to run the provided images you'll need Docker installed. These images are tested on Docker CE for Ubuntu 16.04 (Docker version 18.06.1-ce, build e68fc7a). Once you have Docker installed, [follow the instructions in this README to get started.](#usage)
 
 ## Usage
-TO DO
+Simply follow the instructions in the Docker documentation on how to create a Swarm. This documentation will show you how to manually initialize and add nodes to a Docker Swarm cluster.
 
 ## Configuration
 TO DO
@@ -45,3 +45,9 @@ There is one main interface available on http://localhost:80 to access the diffe
 | Livy | http://localhost:8998 |
 | Docker Visualizer | http://localhost:7000 |
 | Portainer | http://localhost:9000 |
+
+---
+
+## Acknowledgements
+Funded by Ministerio de Ciencia, Innovación y Universidades (RTC-2017-6471-1; MINECO/AEI/FEDER, UE) and also supported by the CEDeI program (Centro de Excelencia de Desarrollo e Innovación, Cabildo de Tenerife). Special thanks to the TARO research group at Universidad de La Laguna for their guidance and support.
+![Logos]()
