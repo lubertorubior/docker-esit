@@ -1,4 +1,4 @@
-![](https://user-images.githubusercontent.com/10713136/48259793-16a09600-e411-11e8-83b4-5a6a6546c55a.png)
+![](https://user-images.githubusercontent.com/10713136/48260380-2faa4680-e413-11e8-96dd-e855aee7634b.png)
 
 # Dockerized Bioinformatic architecture based on Big Data technologies to process data from whole-genome sequencing
 
