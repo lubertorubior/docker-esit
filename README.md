@@ -1,16 +1,18 @@
-![](https://user-images.githubusercontent.com/10713136/48260380-2faa4680-e413-11e8-96dd-e855aee7634b.png)
+![](https://user-images.githubusercontent.com/10713136/48259793-16a09600-e411-11e8-83b4-5a6a6546c55a.png)
 
 # Dockerized Bioinformatic architecture based on Big Data technologies to process data from whole-genome sequencing
 
 This repository presents a Docker container-based infrastructure for NGS data analysis comprising Bioinformatics and Big Data tools (Hadoop and Spark). There are Docker images available for the Hadoop and Spark components and a set of bioinformatics software, including QC applications (FastQC, MultiQC, Qualimap2), aligners (BWA), variant callers (GATK4, Platypus), and other supplementary software (JupyterLab). See list below:
 
-![]()
+![](https://user-images.githubusercontent.com/10713136/48264600-f88f6180-e421-11e8-9411-c358a7e6c333.png)
 
 This application is supposed to be deployed in a cluster of nodes for best performance but it will also work on a single node. Docker Compose is used for multi-container definition and Docker Swarm for container orchestration and cluster management.
 
-![]()
+![](https://user-images.githubusercontent.com/10713136/48264468-8028a080-e421-11e8-8c8e-4db2bac7cc9a.png)
 
 See this [poster]() if you want to know more this project.
+
+---
 
 # Contents
 * [Background](#background)
@@ -50,5 +52,4 @@ There is one main interface available on http://localhost:80 to access the diffe
 
 ## Acknowledgements
 Funded by Ministerio de Ciencia, Innovación y Universidades (RTC-2017-6471-1; MINECO/AEI/FEDER, UE) and also supported by the CEDeI program (Centro de Excelencia de Desarrollo e Innovación, Cabildo de Tenerife). Special thanks to the TARO research group at Universidad de La Laguna for their guidance and support.
-
-![](https://user-images.githubusercontent.com/10713136/48264289-dfd27c00-e420-11e8-979e-9dc56a6bf27a.png)
+![Logos]()
