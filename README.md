@@ -12,8 +12,6 @@ This application is supposed to be deployed in a cluster of nodes for best perfo
 
 See this [poster]() if you want to know more this project.
 
----
-
 # Contents
 * [Background](#background)
 * [Getting started](#getting-started)
