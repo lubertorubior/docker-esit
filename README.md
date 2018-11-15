@@ -16,7 +16,6 @@ See this [poster]() if you want to know more this project.
 * [Background](#background)
 * [Getting started](#getting-started)
 * [Usage](#usage)
-* [Configuration](#configuration)
 * [Interfaces](#interfaces)
 
 ## Background
@@ -28,8 +27,21 @@ In order to run the provided images you'll need Docker installed. These images a
 ## Usage
 Simply follow the instructions in the Docker documentation on how to create a Swarm. This documentation will show you how to manually initialize and add nodes to a Docker Swarm cluster.
 
-## Configuration
-TO DO
+Run in this directory:
+```
+./runall.sh
+docker-compose up
+```
+The app will be available at [http://localhost:80](http://localhost:80).
+
+Alternately, if you want to run it on a [Docker Swarm](https://docs.docker.com/engine/swarm/), first make sure you have a swarm. If you don't, run:
+```
+docker swarm init
+```
+Once you have your swarm, in this directory run:
+```
+docker stack deploy --compose-file docker-stack.yml docker-esi,1
+```
 
 ## Interfaces
 There is one main interface available on http://localhost:80 to access the different services, which are listed below:
