@@ -40,7 +40,7 @@ docker swarm init
 ```
 Once you have your swarm, in this directory run:
 ```
-docker stack deploy --compose-file docker-stack.yml docker-esit
+docker stack deploy --compose-file docker-compose.yml docker-esit
 ```
 
 ## Interfaces
